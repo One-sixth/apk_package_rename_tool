@@ -104,9 +104,9 @@ def package_rename(input_apk_path, new_package_name):
     replace_all_str_file_or_dir(smali_path, ori_package_local, dst_package_local, 'smali')
 
     # 重命名xml的内容，这个一般不使用
-    # xml_path = f'{apk_unpack_dir}/res'
-    # helper.replace_all_str_file_or_dir(xml_path, ori_package_name, DST_PACKAGE_NAME, '.xml')
-
+    xml_path = f'{apk_unpack_dir}/res'
+    replace_all_str_file_or_dir(xml_path, ori_package_name, DST_PACKAGE_NAME, 'xml')
+    replace_all_str_file_or_dir(xml_path, ori_package_local, dst_package_local, 'xml')
 
     # 改完了，现在开始打包
     out_apk_path = f'{tmp_dir}/{DST_PACKAGE_NAME}.apk'
