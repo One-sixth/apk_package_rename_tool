@@ -80,10 +80,10 @@ def package_rename(input_apk_path, new_package_name):
         subprocess.run(unpack_cmd, check=True)
     except subprocess.CalledProcessError:
         print('apktool 解包失败。请检查java是否已安装，apktool是否版本过低，或apk文件是否存在')
-        exit()
+        exit(-1)
 
-
-    # 读取原包名信息和移动位置
+    # 第二步，读取原包名信息和移动位置
+    print('读取原包名信息和移动位置中')
     info_path = f'{apk_unpack_dir}/AndroidManifest.xml'
     xml_tree = et.parse(info_path)
     ori_package_name = str(xml_tree.getroot().attrib['package'])
@@ -91,32 +91,29 @@ def package_rename(input_apk_path, new_package_name):
 
     wait_move_dir = f'{apk_unpack_dir}/smali/{ori_package_local}'
     new_move_dir = f'{apk_unpack_dir}/smali/{dst_package_local}'
-
     shutil.move(wait_move_dir, new_move_dir)
 
-
-    # 改名
+    # 第三步，改名
+    print('改名中')
     # 先改名表单
     replace_all_str_file_or_dir(info_path, ori_package_name, DST_PACKAGE_NAME)
     # 然后改名smali
     smali_path = f'{apk_unpack_dir}/smali'
     replace_all_str_file_or_dir(smali_path, ori_package_name, DST_PACKAGE_NAME, 'smali')
     replace_all_str_file_or_dir(smali_path, ori_package_local, dst_package_local, 'smali')
-
-    # 重命名xml的内容，这个一般不使用
+    # 重命名xml的内容
     xml_path = f'{apk_unpack_dir}/res'
     replace_all_str_file_or_dir(xml_path, ori_package_name, DST_PACKAGE_NAME, 'xml')
     replace_all_str_file_or_dir(xml_path, ori_package_local, dst_package_local, 'xml')
 
-    # 改完了，现在开始打包
+    # 第四步，改完了，现在开始打包
     out_apk_path = f'{tmp_dir}/{DST_PACKAGE_NAME}.apk'
     pack_cmd = f'{JAVA_PATH} -jar {apktool_path} -f b {apk_unpack_dir} -o {out_apk_path}'
     try:
         subprocess.run(pack_cmd, check=True)
     except subprocess.CalledProcessError:
         print('apktool 打包失败。请检查java是否已安装，apktool是否版本过低，或apk文件是否存在')
-        exit()
-
+        exit(-1)
 
     # 打包完成，现在加上签名
     out_apk_sign_path = f'{tmp_dir}/{DST_PACKAGE_NAME}_sign.apk'
@@ -125,12 +122,18 @@ def package_rename(input_apk_path, new_package_name):
         subprocess.run(sign_cmd, check=True)
     except subprocess.CalledProcessError:
         print('signapk 签名失败。请检查java是否已安装，signapk是否版本过低，或apk文件是否存在')
-        exit()
+        exit(-1)
 
-    print('改包名完成，输出文件位于', out_apk_sign_path)
+    print('运行完成，输出文件位于', out_apk_sign_path)
 
 
 if __name__ == '__main__':
+    print()
+    print('APK修改包名快捷工具。你需要预先安装java运行库。注意，对自带验证的包和Kotlin包可能无效。')
+    print('运行成功后，输出文件会保存在代码文件所在的tmp目录内')
+    print('例子：python {} -i com.abc.apk -n abc.abc')
+    print()
+
     parser = argparse.ArgumentParser(description='简单的APK包名重命名工具')
     parser.add_argument('-i', '--input', required=True, type=str, help='指定输入APK的路径')
     parser.add_argument('-n', '--name', required=True, type=str, help='新的包名')
