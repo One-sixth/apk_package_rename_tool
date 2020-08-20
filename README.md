@@ -30,3 +30,8 @@ The output apk that you can found in the tmp folder.
 
 After the package name is modified, the program may not work normally, or some functions may be damaged. With self-checking and some programs written in Kotlin, the program may crash and fail to open after renamed, and its functions may be seriously damaged.  
 The way to replace the package name is to directly replace the corresponding text, without considering the structure. For some specially constructed package names, replacing the package name may fail.  
+
+# 引用 / Reference
+https://www.jianshu.com/p/fe56575d3991
+https://github.com/iBotPeaches/Apktool
+signapk 忘了哪找的了。
