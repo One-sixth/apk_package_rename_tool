@@ -131,7 +131,7 @@ if __name__ == '__main__':
     print()
     print('APK修改包名快捷工具。你需要预先安装java运行库。注意，对自带验证的包和Kotlin包可能无效。')
     print('运行成功后，输出文件会保存在代码文件所在的tmp目录内')
-    print('例子：python {} -i com.abc.apk -n abc.abc')
+    print(f'例子：python {__file__} -i com.abc.apk -n abc.abc')
     print()
 
     parser = argparse.ArgumentParser(description='简单的APK包名重命名工具')
